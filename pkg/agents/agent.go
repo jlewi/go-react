@@ -126,7 +126,8 @@ func (a Agent[TOut]) Run(ctx context.Context, goal string) (TOut, error) {
 
 	// Iterations is the history of the ReAct loop. These are built up over each
 	// loop and sent back in the prompt.
-	var iterations []ThoughtIteration[TOut]
+	// var iterations []ThoughtIteration[TOut]
+	iterations := make([]ThoughtIteration[TOut], 0, 10)
 
 	for {
 		promptData := PromptData[TOut]{
