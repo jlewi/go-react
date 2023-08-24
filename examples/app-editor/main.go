@@ -36,6 +36,7 @@ var maxTokens = flag.Int("max-tokens", 1024, "The maximum number of tokens to ge
 var temperature = flag.Float64("temperature", 0.2, "The temperature to use for the prompt")
 var topK = flag.Int("top-k", 40, "The top-k value to use for the prompt")
 var topP = flag.Float64("top-p", 0.9, "The top-p value to use for the prompt")
+var goal = flag.String("goal", "", "The goal to use for the prompt")
 
 func main() {
 	flag.Parse()
@@ -66,13 +67,19 @@ func main() {
 
 	for {
 		fmt.Println("AI: What is the goal?")
-		fmt.Print("You: ")
-		goal, err := ReadLine()
-		if err != nil {
-			log.Fatalf("failed to read line: %v", err)
+
+		if *goal == "" {
+			fmt.Print("You: ")
+			newGoal, err := ReadLine()
+			if err != nil {
+				log.Fatalf("failed to read line: %v", err)
+			}
+			*goal = newGoal
+		} else {
+			fmt.Printf("You: %s\n", *goal)
 		}
 
-		finalAnswer, err := agents.NewAgent(predictor, tools...).Run(ctx, goal)
+		finalAnswer, err := agents.NewAgent(predictor, tools...).Run(ctx, *goal)
 		if err != nil {
 			log.Fatalf("agent.Run failed: %v", err)
 		}
